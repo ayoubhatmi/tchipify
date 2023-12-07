@@ -4,19 +4,34 @@ import (
 	"encoding/json"
 	"net/http"
 	"tchipify/internal/models"
-)
+	"tchipify/services/songs"
 
-// GetAllSongs handles the request to get all songs.
-func GetAllSongs(w http.ResponseWriter, r *http.Request) {
-	// Convert songs slice to JSON
-	songsJSON, err := json.Marshal(models.Songs)
+	"github.com/sirupsen/logrus"
+)
+ 
+
+func GetSongs(w http.ResponseWriter, _ *http.Request) {
+	// calling service
+	songs, err := songs.GetAllSongs()
 	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		// logging error
+		logrus.Errorf("error : %s", err.Error())
+		customError, isCustom := err.(*models.CustomError)
+		if isCustom {
+			// writing http code in header
+			w.WriteHeader(customError.Code)
+			// writing error message in body
+			body, _ := json.Marshal(customError)
+			_, _ = w.Write(body)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
-	// Set Content-Type header and write the response
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(songsJSON)
+	body, _ := json.Marshal(songs)
+	_, _ = w.Write(body)
+	return
 }
+

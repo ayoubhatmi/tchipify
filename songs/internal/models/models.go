@@ -2,15 +2,11 @@ package models
 
   
 type Song struct {
-	//ID     *uuid.UUID    `json:"id"`
-	ID     int   `json:"id"`
-	Title  string `json:"title"`
-	Artist string `json:"artist"`
+	ID            string    `json:"id"`
+	Artist        string    `json:"artist"`
+	FileName      string    `json:"file_name"`
+	PublishedDate string `json:"published_date"`
+	Title         string    `json:"title"`
 }
 
-// Songs is a slice to store sample songs.
-var Songs = []Song{
-	{ID: 1, Title: "Song 1", Artist: "Artist 1"},
-	{ID: 2, Title: "Song 2", Artist: "Artist 2"},
-	{ID: 3, Title: "Song 3", Artist: "Artist 3"},
-}
+ 

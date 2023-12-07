@@ -3,48 +3,33 @@ package songs
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"tchipify/internal/models"
+	"tchipify/services/songs"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
-// GetSongByID handles the request to get a single song by its ID.
-func GetSongByID(w http.ResponseWriter, r *http.Request) {
-	// Extract the song ID from the URL parameters
-	idStr := chi.URLParam(r, "id")
+func GetSong(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
 
-	// Parse the ID from the string
-	id, err := strconv.Atoi(idStr)
+	collection, err := songs.GetSongById(collectionId)
 	if err != nil {
-		http.Error(w, "Invalid ID format", http.StatusBadRequest)
-		return
-	}
-
-	// Find the song in the slice based on the ID
-	var foundSong *models.Song
-	for _, song := range models.Songs {
-		if song.ID == id {
-			foundSong = &song
-			break
+		logrus.Errorf("error : %s", err.Error())
+		customError, isCustom := err.(*models.CustomError)
+		if isCustom {
+			w.WriteHeader(customError.Code)
+			body, _ := json.Marshal(customError)
+			_, _ = w.Write(body)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
-
-	// If the song is not found, return a 404 Not Found response
-	if foundSong == nil {
-		http.Error(w, "Song not found", http.StatusNotFound)
 		return
 	}
 
-	// Convert the found song to JSON
-	songJSON, err := json.Marshal(foundSong)
-	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Set Content-Type header and write the response
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(songJSON)
+	body, _ := json.Marshal(collection)
+	_, _ = w.Write(body)
+	return
 }
