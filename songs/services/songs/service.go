@@ -6,7 +6,6 @@ import (
 	"tchipify/internal/models"
 	repository "tchipify/internal/repositories/songs"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -26,7 +25,7 @@ func GetAllSongs() ([]models.Song, error) {
 	return collections, nil
 }
 
-func GetSongById(id uuid.UUID) (*models.Song, error) {
+func GetSongById(id int) (*models.Song, error) {
 	collection, err := repository.GetSongById(id)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
@@ -69,3 +68,35 @@ func CreateSong(newSong models.Song) (*models.Song, error) {
 
 	return createdSong, nil
 }
+
+
+func UpdateSongById(updatedSong models.Song) error {
+	err := repository.UpdateSongById(updatedSong)
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			return &models.CustomError{
+				Message: "Song not found",
+				Code:    http.StatusNotFound,
+			}
+		}
+		logrus.Errorf("error updating song in repository: %s", err.Error())
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+	return nil
+}
+
+func DeleteSongById(id int) error {
+	// Call the repository to delete the song
+	err := repository.DeleteSongById(id)
+	if err != nil {
+		return &models.CustomError{
+			Message: "Something went wrong",
+			Code:    http.StatusInternalServerError,
+		}
+	}
+	return nil
+}
+

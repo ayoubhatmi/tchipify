@@ -1,11 +1,8 @@
 package songs
 
 import (
-	"strconv"
 	"tchipify/internal/helpers"
 	"tchipify/internal/models"
-
-	"github.com/gofrs/uuid"
 )
 
 func GetAllSongs() ([]models.Song, error) {
@@ -35,12 +32,12 @@ func GetAllSongs() ([]models.Song, error) {
 	return songs, err
 }
 
-func GetSongById(id uuid.UUID) (*models.Song, error) {
+func GetSongById(id int) (*models.Song, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
 	}
-	row := db.QueryRow("SELECT * FROM songs WHERE id=?", id.String())
+	row := db.QueryRow("SELECT * FROM songs WHERE id=?", id)
 	helpers.CloseDB(db)
 
 	var song models.Song
@@ -74,6 +71,39 @@ func CreateSong(newSong models.Song) (*models.Song, error) {
 	}
 
 	// Update the Song object with the generated ID
-	newSong.ID = strconv.FormatInt(int64(id), 10)
+	newSong.ID = int(id)
 	return &newSong, nil
+}
+
+
+func UpdateSongById(updatedSong models.Song) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+	defer helpers.CloseDB(db)
+
+	// Update the song in the database
+	_, err = db.Exec("UPDATE songs SET artist=?, file_name=?, published_date=?, title=? WHERE id=?",
+		updatedSong.Artist, updatedSong.FileName, updatedSong.PublishedDate, updatedSong.Title, updatedSong.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteSongById(id int) error {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return err
+	}
+	defer helpers.CloseDB(db)
+
+	_, err = db.Exec("DELETE FROM songs WHERE id=?", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
