@@ -8,17 +8,19 @@ import (
 	"tchipify/internal/models"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 func Ctx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		collectionId, err := uuid.FromString(chi.URLParam(r, "id"))
+		// Parse ID from URL parameter
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
 		if err != nil {
-			logrus.Errorf("parsing error : %s", err.Error())
+			logrus.Errorf("parsing error: %s", err.Error())
 			customError := &models.CustomError{
-				Message: fmt.Sprintf("cannot parse id (%s) as UUID", chi.URLParam(r, "id")),
+				Message: fmt.Sprintf("cannot parse id (%s) as integer", idStr),
 				Code:    http.StatusUnprocessableEntity,
 			}
 			w.WriteHeader(customError.Code)
@@ -27,7 +29,7 @@ func Ctx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "collectionId", collectionId)
+		ctx := context.WithValue(r.Context(), "collectionId", id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

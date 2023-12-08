@@ -6,13 +6,12 @@ import (
 	"tchipify/internal/models"
 	"tchipify/services/songs"
 
-	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 func GetSong(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(uuid.UUID)
+	collectionId, _ := ctx.Value("collectionId").(int)
 
 	collection, err := songs.GetSongById(collectionId)
 	if err != nil {
