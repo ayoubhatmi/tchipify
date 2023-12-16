@@ -11,6 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// UpdateSong
+// @Tags         songs
+// @Summary      Update a single song by ID.
+// @Description  Update a single song by its ID in the database.
+// @Param        id            path      string  true  "Song UUID formatted ID"
+// @Param        title         formData  string  true  "New title"
+// @Param        artist        formData  string  true  "New artist"
+// @Produce      json
+// @Success      200 {object} models.Song
+// @Failure      400 "Invalid ID format"
+// @Failure      404 "Song not found"
+// @Failure      500 "Internal Server Error"
+// @Router       /songs/{id} [put]
 func UpdateSong(w http.ResponseWriter, r *http.Request) {
 	var updatedSong models.Song
 	err := json.NewDecoder(r.Body).Decode(&updatedSong)

@@ -9,6 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetSongByID
+// @Tags         songs
+// @Summary      Get a single song by ID.
+// @Description  Get a single song by its ID from the database.
+// @Param        id            path      string  true  "Song UUID formatted ID"
+// @Produce      json
+// @Success      200 {object} models.Song
+// @Failure      400 "Invalid ID format"
+// @Failure      404 "Song not found"
+// @Failure      500 "Internal Server Error"
+// @Router       /songs/{id} [get]
 func GetSong(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	collectionId, _ := ctx.Value("collectionId").(int)
