@@ -2,8 +2,8 @@ package main
 
 import (
 	"net/http"
-	"tchipify/internal/controllers/songs"
-	"tchipify/internal/helpers"
+	"tchipify/users/internal/controllers/users"
+	"tchipify/users/internal/helpers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
@@ -12,19 +12,19 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	r.Route("/songs", func(r chi.Router) {
-		r.Get("/", songs.GetSongs)
-		r.Post("/", songs.AddSong)  
+	r.Route("/users", func(r chi.Router) {
+		r.Get("/", users.GetUsers)
+		r.Post("/", users.AddUser)  
 		r.Route("/{id}", func(r chi.Router) {
-			r.Use(songs.Ctx)
-			r.Get("/", songs.GetSong)
-			r.Put("/", songs.UpdateSong)
-			r.Delete("/", songs.DeleteSong)
+			r.Use(users.Ctx)
+			r.Get("/", users.GetUser)
+			r.Put("/", users.UpdateUser)
+			r.Delete("/", users.DeleteUser)
 		})
 	})
 
-	logrus.Info("[INFO] Web server started. Now listening on *:8080")
-	logrus.Fatalln(http.ListenAndServe(":8080", r))
+	logrus.Info("[INFO] Web server started. Now listening on *:8081")
+	logrus.Fatalln(http.ListenAndServe(":8081", r))
 }
 
 func init() {
@@ -33,12 +33,11 @@ func init() {
 		logrus.Fatalf("error while opening database : %s", err.Error())
 	}
 	schemes := []string{`
-	CREATE TABLE IF NOT EXISTS songs (
+	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		artist VARCHAR(255) NOT NULL,
-		file_name VARCHAR(255) NOT NULL,
-		title VARCHAR(255) NOT NULL,
-		published_date DATETIME NOT NULL
+		username VARCHAR(255) NOT NULL,
+ 		name VARCHAR(255) NOT NULL,
+		inscription_date DATETIME NOT NULL
 	);
 `,
 	}
