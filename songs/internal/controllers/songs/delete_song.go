@@ -11,6 +11,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DeleteSong
+// @Tags         songs
+// @Summary      Delete a single song by ID.
+// @Description  Delete a single song by its ID from the database.
+// @Param        id            path      string  true  "Song UUID formatted ID"
+// @Success      204 "No Content"
+// @Failure      400 "Invalid ID format"
+// @Failure      404 "Song not found"
+// @Failure      500 "Internal Server Error"
+// @Router       /songs/{id} [delete]
 func DeleteSong(w http.ResponseWriter, r *http.Request) {
 	// Extract song ID from URL parameter
 	songIDStr := chi.URLParam(r, "id")

@@ -8,8 +8,15 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
- 
 
+// GetSongs
+// @Tags         songs
+// @Summary      Get all songs.
+// @Description  Get all songs from the database.
+// @Produce      json
+// @Success      200 {array} models.Song
+// @Failure      500 "Internal Server Error"
+// @Router       /songs [get]
 func GetSongs(w http.ResponseWriter, _ *http.Request) {
 	// calling service
 	songs, err := songs.GetAllSongs()

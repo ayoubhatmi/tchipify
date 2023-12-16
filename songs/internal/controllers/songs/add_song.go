@@ -5,9 +5,21 @@ import (
 	"net/http"
 	"tchipify/internal/models"
 	"tchipify/services/songs"
-
+ 
 	"github.com/sirupsen/logrus"
 )
+
+// AddSong
+// @Tags         songs
+// @Summary      Add a new song.
+// @Description  Add a new song to the database.
+// @Param        title         formData  string  true  "Title of the song"
+// @Param        artist        formData  string  true  "Artist of the song"
+// @Produce      json
+// @Success      201 {object} models.Song
+// @Failure      400 "Invalid input data"
+// @Failure      500 "Internal Server Error"
+// @Router       /songs [post]
 func AddSong(w http.ResponseWriter, r *http.Request) {
 	// Parse the incoming JSON request body to get the new song data
 	var newSong models.Song
