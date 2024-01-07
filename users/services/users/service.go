@@ -26,20 +26,16 @@ func GetAllUsers() ([]models.User, error) {
 }
 
 func CreateUser(newUser models.User) (*models.User, error) {
-	// You may want to add validation logic for the new user before proceeding
-	// For example, check if required fields are present.
 
 	var err error
 
-	// calling repository to insert the new user
 	createdUser, err := repository.CreateUser(newUser)
 
 	// managing errors
 	if err != nil {
 		logrus.Errorf("error creating user: %s", err.Error())
 
-		// You can add more specific error handling based on the type of error.
-		// For example, check for unique constraint violations and return a 409 status code.
+
 
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
@@ -52,7 +48,6 @@ func CreateUser(newUser models.User) (*models.User, error) {
 
 
 func DeleteUserById(id int) error {
-	// Call the repository to delete the user
 	err := repository.DeleteUserById(id)
 	if err != nil {
 		return &models.CustomError{

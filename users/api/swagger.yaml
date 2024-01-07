@@ -1,0 +1,150 @@
+basePath: /v1
+definitions:
+  models.User:
+    properties:
+      id:
+        type: integer
+      inscription_date:
+        type: string
+      name:
+        type: string
+      sername:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API for managing users
+  title: Users API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      description: Get all users from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "500":
+          description: Internal Server Error
+      summary: Get all users.
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Adds a new user to the system.
+      parameters:
+      - description: User object to be added
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User added successfully
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Delete a single user by its ID from the database.
+      parameters:
+      - description: User UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID format
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+      summary: Delete a single user by ID.
+      tags:
+      - users
+    get:
+      description: Get a single user by its ID from the database.
+      parameters:
+      - description: User UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid ID format
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+      summary: Get a single user by ID.
+      tags:
+      - users
+    put:
+      description: Update a single user by its ID in the database.
+      parameters:
+      - description: User UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: New artist
+        in: formData
+        name: artist
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid ID format
+        "404":
+          description: User not found
+        "500":
+          description: Internal Server Error
+      summary: Update a single user by ID.
+      tags:
+      - users
+swagger: "2.0"
