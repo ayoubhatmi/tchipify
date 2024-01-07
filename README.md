@@ -25,7 +25,7 @@ Then run :
 
 ## Documentation
 
-Documentation is visible in **api** directory ([here](api/swagger.json)).
+Documentation is visible in **api** directory.
 
 
 
