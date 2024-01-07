@@ -8,9 +8,12 @@
 - **flask_api**: Flask API for integrating data from the three other APIs
 - **front**: Vue.js frontend
 
-# For Go API
-## Run
 
+## Getting Started
+
+### Go APIs
+
+#### Run the following commands in the terminal:
 Tidy / download modules :
 ```
 go mod tidy
@@ -30,14 +33,14 @@ Then run :
 ./middleware_collections
 ```
 
-## Documentation
+#### Documentation
 
 Documentation is visible in **api** directory.
 
 
 
-# For Flask API
-## Run
+### Flask API
+#### Run the following commands in the terminal:
 
 Download modules :
 ```
@@ -55,7 +58,7 @@ If a warning about your PATH appears :
 export PATH=$PATH:$HOME/.local/bin
 ```
 
-## Documentation
+#### Documentation
 
 Documentation is visible in **/api/docs** when running the app.
 
