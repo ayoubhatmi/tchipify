@@ -1,5 +1,12 @@
 # TP middleware 
 
+## Project Structure
+
+- **songs**: Go API for handling songs data
+- **users**: Go API for managing user information
+- **ratings**: API for managing ratings
+- **flask_api**: Flask API for integrating data from the three other APIs
+- **front**: Vue.js frontend
 
 # For Go API
 ## Run
