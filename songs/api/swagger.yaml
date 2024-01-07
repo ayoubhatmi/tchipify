@@ -1,0 +1,146 @@
+basePath: /v1
+definitions:
+  models.Song:
+    properties:
+      artist:
+        type: string
+      file_name:
+        type: string
+      id:
+        type: integer
+      published_date:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for managing songs
+  title: Songs API
+  version: "1.0"
+paths:
+  /songs:
+    get:
+      description: Get all songs from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Song'
+            type: array
+        "500":
+          description: Internal Server Error
+      summary: Get all songs.
+      tags:
+      - songs
+    post:
+      description: Add a new song to the database.
+      parameters:
+      - description: Title of the song
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Artist of the song
+        in: formData
+        name: artist
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Invalid input data
+        "500":
+          description: Internal Server Error
+      summary: Add a new song.
+      tags:
+      - songs
+  /songs/{id}:
+    delete:
+      description: Delete a single song by its ID from the database.
+      parameters:
+      - description: Song UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID format
+        "404":
+          description: Song not found
+        "500":
+          description: Internal Server Error
+      summary: Delete a single song by ID.
+      tags:
+      - songs
+    get:
+      description: Get a single song by its ID from the database.
+      parameters:
+      - description: Song UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Invalid ID format
+        "404":
+          description: Song not found
+        "500":
+          description: Internal Server Error
+      summary: Get a single song by ID.
+      tags:
+      - songs
+    put:
+      description: Update a single song by its ID in the database.
+      parameters:
+      - description: Song UUID formatted ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: New artist
+        in: formData
+        name: artist
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Invalid ID format
+        "404":
+          description: Song not found
+        "500":
+          description: Internal Server Error
+      summary: Update a single song by ID.
+      tags:
+      - songs
+swagger: "2.0"
