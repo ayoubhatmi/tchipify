@@ -5,21 +5,11 @@ import (
 	"net/http"
 	"tchipify/internal/models"
 	"tchipify/services/songs"
- 
+
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
-// AddSong
-// @Tags         songs
-// @Summary      Add a new song.
-// @Description  Add a new song to the database.
-// @Param        title         formData  string  true  "Title of the song"
-// @Param        artist        formData  string  true  "Artist of the song"
-// @Produce      json
-// @Success      201 {object} models.Song
-// @Failure      400 "Invalid input data"
-// @Failure      500 "Internal Server Error"
-// @Router       /songs [post]
 func AddSong(w http.ResponseWriter, r *http.Request) {
 	// Parse the incoming JSON request body to get the new song data
 	var newSong models.Song
@@ -29,6 +19,17 @@ func AddSong(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// Generate a new UUID for the song ID
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		logrus.Errorf("error generating UUID: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Set the generated UUID as the ID for the new song
+	newSong.ID = uuid.String()
 
 	// Call the service layer to create the new song
 	createdSong, err := songs.CreateSong(newSong)

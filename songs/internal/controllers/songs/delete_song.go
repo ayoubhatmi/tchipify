@@ -3,11 +3,11 @@ package songs
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"tchipify/internal/models"
 	"tchipify/services/songs"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,9 +24,11 @@ import (
 func DeleteSong(w http.ResponseWriter, r *http.Request) {
 	// Extract song ID from URL parameter
 	songIDStr := chi.URLParam(r, "id")
-	songID, err := strconv.Atoi(songIDStr)
+
+	// Parse the ID as UUID
+	songID, err := uuid.FromString(songIDStr)
 	if err != nil {
-		logrus.Errorf("error parsing song ID: %s", err.Error())
+		logrus.Errorf("parsing error: %s", err.Error())
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -46,5 +48,5 @@ func DeleteSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 }

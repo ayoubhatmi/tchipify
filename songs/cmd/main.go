@@ -14,15 +14,16 @@ func main() {
 
 	r.Route("/songs", func(r chi.Router) {
 		r.Get("/", songs.GetSongs)
-		r.Post("/", songs.AddSong)  
+		r.Post("/", songs.AddSong)
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(songs.Ctx)
+
+			// Use *uuid.UUID as the type for the id parameter
 			r.Get("/", songs.GetSong)
 			r.Put("/", songs.UpdateSong)
 			r.Delete("/", songs.DeleteSong)
 		})
 	})
-
 	logrus.Info("[INFO] Web server started. Now listening on *:8080")
 	logrus.Fatalln(http.ListenAndServe(":8080", r))
 }
@@ -34,11 +35,11 @@ func init() {
 	}
 	schemes := []string{`
 	CREATE TABLE IF NOT EXISTS songs (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		id TEXT PRIMARY KEY,
 		artist VARCHAR(255) NOT NULL,
 		file_name VARCHAR(255) NOT NULL,
-		title VARCHAR(255) NOT NULL,
-		published_date DATETIME NOT NULL
+		published_date DATETIME NOT NULL,
+		title VARCHAR(255) NOT NULL
 	);
 `,
 	}
