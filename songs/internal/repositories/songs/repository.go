@@ -3,6 +3,8 @@ package songs
 import (
 	"tchipify/internal/helpers"
 	"tchipify/internal/models"
+
+	"github.com/gofrs/uuid"
 )
 
 func GetAllSongs() ([]models.Song, error) {
@@ -31,21 +33,21 @@ func GetAllSongs() ([]models.Song, error) {
 
 	return songs, err
 }
-
-func GetSongById(id int) (*models.Song, error) {
+func GetSongById(id uuid.UUID) (*models.Song, error) {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return nil, err
 	}
-	row := db.QueryRow("SELECT * FROM songs WHERE id=?", id)
-	helpers.CloseDB(db)
+	defer helpers.CloseDB(db)
+
+	row := db.QueryRow("SELECT * FROM songs WHERE id=?", id.String())
 
 	var song models.Song
-	err = row.Scan(&song.ID, &song.Artist, &song.FileName, &song.PublishedDate, &song.Title )
+	err = row.Scan(&song.ID, &song.Artist, &song.FileName, &song.PublishedDate, &song.Title)
 	if err != nil {
 		return nil, err
 	}
-	return &song, err
+	return &song, nil
 }
 
 
@@ -54,24 +56,24 @@ func CreateSong(newSong models.Song) (*models.Song, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer helpers.CloseDB(db) // Ensure that the database connection is closed even if an error occurs.
 
-	result, err := db.Exec("INSERT INTO songs (artist, file_name, published_date, title) VALUES (?, ?, ?, ?)",
-		newSong.Artist, newSong.FileName, newSong.PublishedDate, newSong.Title)
-
-	helpers.CloseDB(db)
-
+	// Generate a new UUID for the song ID
+	uuid, err := uuid.NewV4()
 	if err != nil {
 		return nil, err
 	}
 
-	// Get the ID of the newly inserted row
-	id, err := result.LastInsertId()
+	_, err = db.Exec("INSERT INTO songs (id, artist, file_name, published_date, title) VALUES (?, ?, ?, ?, ?)",
+    uuid.String(), newSong.Artist, newSong.FileName, newSong.PublishedDate, newSong.Title)
+
 	if err != nil {
 		return nil, err
 	}
 
 	// Update the Song object with the generated ID
-	newSong.ID = int(id)
+	newSong.ID = uuid.String()
+
 	return &newSong, nil
 }
 
@@ -93,14 +95,14 @@ func UpdateSongById(updatedSong models.Song) error {
 	return nil
 }
 
-func DeleteSongById(id int) error {
+func DeleteSongById(id uuid.UUID) error {
 	db, err := helpers.OpenDB()
 	if err != nil {
 		return err
 	}
 	defer helpers.CloseDB(db)
 
-	_, err = db.Exec("DELETE FROM songs WHERE id=?", id)
+	_, err = db.Exec("DELETE FROM songs WHERE id=?", id.String())
 	if err != nil {
 		return err
 	}

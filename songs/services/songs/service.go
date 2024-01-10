@@ -6,6 +6,7 @@ import (
 	"tchipify/internal/models"
 	repository "tchipify/internal/repositories/songs"
 
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,19 +26,19 @@ func GetAllSongs() ([]models.Song, error) {
 	return collections, nil
 }
 
-func GetSongById(id int) (*models.Song, error) {
+func GetSongById(id uuid.UUID) (*models.Song, error) {
 	collection, err := repository.GetSongById(id)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
 			return nil, &models.CustomError{
-				Message: "collection not found",
+				Message: "Song not found",
 				Code:    http.StatusNotFound,
 			}
 		}
-		logrus.Errorf("error retrieving collections : %s", err.Error())
+		logrus.Errorf("error retrieving song: %s", err.Error())
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
-			Code:    500,
+			Code:    http.StatusInternalServerError,
 		}
 	}
 
@@ -45,8 +46,6 @@ func GetSongById(id int) (*models.Song, error) {
 }
 
 func CreateSong(newSong models.Song) (*models.Song, error) {
-	// You may want to add validation logic for the new song before proceeding
-	// For example, check if required fields are present.
 
 	var err error
 
@@ -56,9 +55,6 @@ func CreateSong(newSong models.Song) (*models.Song, error) {
 	// managing errors
 	if err != nil {
 		logrus.Errorf("error creating song: %s", err.Error())
-
-		// You can add more specific error handling based on the type of error.
-		// For example, check for unique constraint violations and return a 409 status code.
 
 		return nil, &models.CustomError{
 			Message: "Something went wrong",
@@ -73,7 +69,7 @@ func CreateSong(newSong models.Song) (*models.Song, error) {
 func UpdateSongById(updatedSong models.Song) error {
 	err := repository.UpdateSongById(updatedSong)
 	if err != nil {
-		if err.Error() == sql.ErrNoRows.Error() {
+		if err == sql.ErrNoRows {
 			return &models.CustomError{
 				Message: "Song not found",
 				Code:    http.StatusNotFound,
@@ -88,7 +84,7 @@ func UpdateSongById(updatedSong models.Song) error {
 	return nil
 }
 
-func DeleteSongById(id int) error {
+func DeleteSongById(id uuid.UUID) error {
 	// Call the repository to delete the song
 	err := repository.DeleteSongById(id)
 	if err != nil {
@@ -99,4 +95,3 @@ func DeleteSongById(id int) error {
 	}
 	return nil
 }
-

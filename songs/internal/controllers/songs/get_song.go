@@ -6,6 +6,8 @@ import (
 	"tchipify/internal/models"
 	"tchipify/services/songs"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,12 +23,21 @@ import (
 // @Failure      500 "Internal Server Error"
 // @Router       /songs/{id} [get]
 func GetSong(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	collectionId, _ := ctx.Value("collectionId").(int)
+	// Extract song ID from URL parameter
+	songIDStr := chi.URLParam(r, "id")
 
-	collection, err := songs.GetSongById(collectionId)
+	// Parse the song ID as a UUID
+	songID, err := uuid.FromString(songIDStr)
 	if err != nil {
-		logrus.Errorf("error : %s", err.Error())
+		logrus.Errorf("error parsing song ID: %s", err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Call the service layer to get the song by ID
+	collection, err := songs.GetSongById(songID)
+	if err != nil {
+		logrus.Errorf("error: %s", err.Error())
 		customError, isCustom := err.(*models.CustomError)
 		if isCustom {
 			w.WriteHeader(customError.Code)
