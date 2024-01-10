@@ -3,15 +3,9 @@ from marshmallow import Schema, fields, validates_schema, ValidationError
 
 from src.models.http_exceptions import *
 import src.services.ratings as ratings_service
+from src.schemas.rating import RatingSchema
 
 ratings = Blueprint(name="ratings", import_name=__name__)
-
-
-class RatingSchema(Schema):
-    id = fields.Int(description="Rating ID")
-    value = fields.Int(description="Rating Value")
-
-# Add any other fields relevant to your ratings model
 
 
 @ratings.route('/songs/<int:song_id>/ratings', methods=['GET'])
