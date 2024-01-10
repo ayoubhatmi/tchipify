@@ -5,13 +5,13 @@
 ## Project Structure
 
 - **songs**: Go API for handling songs data.
-  url = http://localhost:8080/songs/
+  base_url = http://localhost:8080/songs/
 - **users**: Go API for managing user information.
-  url = http://localhost:8081/users/
+  base_url  = http://localhost:8081/users/
 - **ratings**: API for managing ratings.
-  url = https://ratings-mike.edu.forestier.re
+  base_url  = https://ratings-mike.edu.forestier.re
 - **flask_api**: Flask API for integrating data from the three other APIs.
-  url = http://localhost:8888/
+  base_url  = http://localhost:8888/
 - **front**: Vue.js frontend (work in progress).
 
 
