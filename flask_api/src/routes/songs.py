@@ -3,17 +3,9 @@ from marshmallow import Schema, fields, ValidationError
 
 from src.models.http_exceptions import *
 import src.services.songs as songs_service
+from src.schemas.song import SongSchema
 
 songs = Blueprint(name="songs", import_name=__name__)
-
-
-class SongSchema(Schema):
-    id = fields.Int(description="Song ID")
-    artist = fields.String(description="Artist")
-    file_name = fields.String(description="File Name")
-    published_date = fields.String(description="Published Date")
-    title = fields.String(description="Title")
-
 
 @songs.route('/', methods=['GET'])
 def get_songs():
